@@ -1,0 +1,66 @@
+name: PR validation
+
+# Flujo del equipo: PRs solo contra develop/main, title conventional commit,
+# rama type/description, un solo label type:* y issue aprobado vinculado.
+# Reglas completas: AGENTS.md y CONTRIBUTING.md en la raíz.
+
+on:
+  pull_request:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  validate:
+    name: Conventions (branch, title, labels, issue)
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR_NUMBER: ${{ github.event.number }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: RAMA — type/description
+        run: |
+          branch="${GITHUB_HEAD_REF}"
+          echo "Rama: $branch"
+          if ! grep -qE '^(feat|fix|chore|docs|style|refactor|perf|test|build|ci|revert)/[a-z0-9._-]+$' <<< "$branch"; then
+            echo "::error title=Título de rama inválido::La rama '$branch' no cumple ^(feat|fix|chore|...)/[a-z0-9._-]+\$ (ver CONTRIBUTING.md §3)"
+            exit 1
+          fi
+
+      - name: TÍTULO — conventional commit
+        run: |
+          title="$(gh pr view "$PR_NUMBER" --json title -q .title)"
+          echo "Título: $title"
+          if ! grep -qE '^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-9._-]+\))?!?: .+' <<< "$title"; then
+            echo "::error title=Título de PR inválido::'$title' no es un conventional commit (ver CONTRIBUTING.md §4)"
+            exit 1
+          fi
+
+      - name: LABELS — exactamente un type:*
+        run: |
+          found="$(gh pr view "$PR_NUMBER" --json labels -q '[.labels[].name | select(startswith("type:"))] | length')"
+          echo "Labels type:* encontrados: $found"
+          if [ "$found" != "1" ]; then
+            echo "::error title=Label type:* incorrecto::El PR debe llevar exactamente un label type:* (tiene $found)"
+            exit 1
+          fi
+
+      - name: ISSUE — Closes #N con status:approved
+        run: |
+          body="$(gh pr view "$PR_NUMBER" --json body -q .body)"
+          issue_no="$(grep -ioE '(Closes|Fixes|Resolves) #[0-9]+' <<< "$body" | head -1 | grep -oE '[0-9]+' || true)"
+          if [ -z "$issue_no" ]; then
+            echo "::error title=Issue faltante::El cuerpo del PR no cierra ningún issue (hace falta 'Closes #N')"
+            exit 1
+          fi
+          echo "Issue vinculado: #$issue_no"
+          approved="$(gh issue view "$issue_no" --json labels -q '.labels[].name' | grep -cx 'status:approved' || true)"
+          if [ "$approved" != "1" ]; then
+            echo "::error title=Issue no aprobado::El issue #$issue_no no tiene el label status:approved"
+            exit 1
+          fi
