@@ -3,8 +3,20 @@ name: CI
 on:
   push:
     branches: [main, develop]
+    paths:
+      - "client/**"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - ".github/workflows/ci.yml"
+  # Sin `paths` en pull_request: si la rama protegida exige este check,
+  # los PRs sin cambios de client nunca lo reportarian y quedarian stuck
+  # (aprendizaje del ciclo previo). En `push` se mantiene `paths`.
   pull_request:
     branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   client:
