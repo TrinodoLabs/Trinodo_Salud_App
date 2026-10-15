@@ -59,7 +59,7 @@ jobs:
             exit 1
           fi
           echo "Issue vinculado: #$issue_no"
-          approved="$(gh issue view "$issue_no" --json labels -q '[.labels[].name]' | grep -cx 'status:approved' || true)"
+          approved="$(gh issue view "$issue_no" --json labels -q '.labels[].name' | grep -cx 'status:approved' || true)"
           if [ "$approved" != "1" ]; then
             echo "::error title=Issue no aprobado::El issue #$issue_no no tiene el label status:approved"
             exit 1
