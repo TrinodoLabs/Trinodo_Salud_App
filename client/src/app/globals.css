@@ -66,3 +66,11 @@
 .wait-row strong{font-weight:700}
 .wait-row.offering{animation:pulse-row 1.2s infinite}
 @keyframes pulse-row{0%,100%{background:transparent}50%{background:#fdf6e8}}
+
+/* valor-visual-demo: tiempo ahorrado */
+.save-card{border:1px solid #e8ecf6;background:linear-gradient(145deg,#fbfcff,#f5f6ff)}
+.save-badge{display:inline-flex;align-items:center;gap:4px;background:#7169dd;color:#fff;border-radius:99px;padding:4px 9px;font-size:9.5px;font-weight:700;white-space:nowrap}
+.save-rows{display:flex;flex-direction:column;gap:6px;margin-top:9px}
+.save-rows span{display:flex;justify-content:space-between;font-size:9.5px;color:var(--sub)}
+.save-rows strong{color:var(--ink);font-weight:700}
+.save-note{display:block;margin-top:8px;font-size:8px;color:var(--faint)}
