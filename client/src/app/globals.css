@@ -111,3 +111,6 @@
 .rsv-summary span{font-size:10px;color:var(--sub)}
 .rsv-wa{display:flex;align-items:center;gap:5px;color:var(--green)!important;font-size:9.5px!important;margin-top:7px!important}
 .rsv-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;justify-content:center}
+
+/* valor-visual-demo: rotulos demo */
+.demo-tag{display:inline-flex;align-items:center;background:#eceafc;color:#6a61d9;font-size:7.5px;font-weight:800;letter-spacing:.8px;border-radius:4px;padding:2px 5px;margin-right:5px;vertical-align:2px}
