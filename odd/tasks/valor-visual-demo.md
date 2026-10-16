@@ -11,8 +11,7 @@ que un comprador (dueño/a de consultorio) perciba el valor al recorrer la demo.
   usuario las apruebe).
 - S2: "Overlay de bienvenida de 3 pasos al entrar a la demo: qué es, qué podés
   tocar, y el diferencial en una frase."
-- S3: "Burbuja de WhatsApp simulada en la agenda ... apareciendo sola" —
-  confirmación de paciente simulada, reactiva cuando se confirma un turno.
+- S3: (RETIRADA por L5) burbuja de WhatsApp — eliminada del demo; la confirmación del paciente se comunica por email y los estados de la agenda.
 - S4: "Toast mágico de lista de espera: 'Se liberó un turno a las 15:30 → lo
   ofrecimos a Agustina Flores'" — flujo ofrecido → aceptado → agendado.
 - S5: "CTA fijo ('Quiero este sistema para mi consultorio') visible en todo
@@ -23,7 +22,7 @@ que un comprador (dueño/a de consultorio) perciba el valor al recorrer la demo.
   la demo (o quitarlo)."
 - S8: "Vista de reserva del paciente (1 pantalla): el link público donde el
   paciente elige profesional, día y horario."
-- S9: "Canal WhatsApp en el toggle de recordatorios, junto a email."
+- S9: (AJUSTADA por L5) recordatorios por email únicamente; el canal WhatsApp se retiró por su dificultad de integración real.
 - S10: "Tour guiado con spotlight de 4–5 puntos."
 - S11: "Card 'Tiempo ahorrado hoy' en los stats."
 - S12: "Ocultar o agrupar los 'producto real' en un solo rótulo honesto."
@@ -49,3 +48,4 @@ que un comprador (dueño/a de consultorio) perciba el valor al recorrer la demo.
 - L2: "si quieres hazlas y yo las miro aqui en local" — autoriza implementar las ideas para revisión local en rama feature.
 - L3: Implementación completa en `feat/valor-visual-demo` (T1–T9: 596bd31, 1be7772, c71b922, f4b50eb, 672d4df, dfaf196, 1b8a592, b33a961, 5951138). Verificación: `pnpm build` OK (Next 14.2.35, tipos y lint OK); verificación end-to-end en Chrome: bienvenida 3 pasos con personalización en vivo (sidebar + crumb = "Consultorio La Esperanza"), tour auto-inicia tras la bienvenida y se cierra con flag visto, reserva online end-to-end (Ana Prueba · 15:30 → aparece en Agenda como Pendiente $18.500), simulación de lista de espera automática (Agustina) y manual (Nicolás · 14:00, waitlist → 0), burbuja WhatsApp reactiva al confirmar turno de Ana, CTA con clínica precargada y toast "¡Gracias! Te contactamos...", canales WhatsApp/Email activos (default WhatsApp), rótulos DEMO presentes en Pagos y Media.
 - L4: Pendiente (fuera de alcance, decisión del usuario): página de precios. El push y el PR contra develop quedan como decisión del usuario (requieren issue aprobado por AGENTS.md).
+- L5: "no me gusto lo que agregase de whastapp, es muy dificil integrar whatsapp. ahora ves que en agenda no hay nada hecho, q recomiendas hacer ahi." — se retiran las features de WhatsApp (burbuja reactiva/pasiva, canal de recordatorios, textos de bienvenida/tour/reserva/lista de espera) y se vuelven a email; queda pendiente definir qué sumar en Agenda (pregunta abierta al usuario).
