@@ -140,3 +140,7 @@
 .tl-block.done{background:#e8f7ef;color:#1d7a5f;border-left:3px solid #249879}
 .tl-block.cancelled,.tl-block.noshow{background:#f3f4f7;color:#8f94a3;border-left:3px solid #c3c7d1}
 .tl-block.cancelled strong,.tl-block.noshow strong{text-decoration:line-through}
+
+/* valor-visual-demo: acciones de encabezado e importacion */
+.heading-actions{display:flex;align-items:center;gap:8px}
+.import-drop{cursor:pointer;margin-bottom:6px}
