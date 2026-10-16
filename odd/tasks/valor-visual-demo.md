@@ -32,18 +32,20 @@ que un comprador (dueño/a de consultorio) perciba el valor al recorrer la demo.
 
 ## Tasks
 
-- T1 (S2,S6): nombre de clínica persistido + overlay de bienvenida 3 pasos. Commit: feat(demo): bienvenida de tres pasos y clinica con nombre propio
-- T2 (S5): tarjeta CTA en sidebar + modal de contacto demo. Commit: feat(demo): llamado a la accion para pedir el sistema
-- T3 (S3): burbuja de WhatsApp al confirmar turno. Commit: feat(demo): burbuja de whatsapp al confirmar turno
-- T4 (S4): llenado automático de hueco desde lista de espera. Commit: feat(demo): llenado automatico de hueco desde lista de espera
-- T5 (S7,S11): % confirmado calculado + card tiempo ahorrado. Commit: feat(demo): metricas derivadas de datos y tiempo ahorrado
-- T6 (S9): canal de recordatorios WhatsApp/Email. Commit: feat(demo): canal de recordatorios whatsapp y email
-- T7 (S8): vista Reserva online del paciente. Commit: feat(demo): vista de reserva online del paciente
-- T8 (S12): rótulos DEMO consistentes. Commit: feat(demo): rotulos demo consistentes
-- T9 (S10): recorrido guiado con spotlight. Commit: feat(demo): recorrido guiado con foco
-- T10: build + verificación visual en navegador. Commit: (evidencia en Log)
+- T1 ✅ (S2,S6): nombre de clínica persistido + overlay de bienvenida 3 pasos. Commit: 596bd31
+- T2 ✅ (S5): tarjeta CTA en sidebar + modal de contacto demo. Commit: 1be7772
+- T3 ✅ (S3): burbuja de WhatsApp al confirmar turno. Commit: c71b922
+- T4 ✅ (S4): llenado automático de hueco desde lista de espera. Commit: f4b50eb
+- T5 ✅ (S7,S11): % confirmado calculado + card tiempo ahorrado. Commit: 672d4df
+- T6 ✅ (S9): canal de recordatorios WhatsApp/Email. Commit: dfaf196
+- T7 ✅ (S8): vista Reserva online del paciente. Commit: 1b8a592
+- T8 ✅ (S12): rótulos DEMO consistentes. Commit: b33a961
+- T9 ✅ (S10): recorrido guiado con spotlight. Commit: 5951138
+- T10 ✅: build + verificación visual en navegador (evidencia en Log).
 
 ## Log
 
 - L1: "Actualiza la rama develop y ayudame a identificar en el lading page que cosas serian utiles o muestran valor a un cliente que quiera comprar esta web. el alcance aun no es tecnico, si no de ideas visuales y valor al cliente."
 - L2: "si quieres hazlas y yo las miro aqui en local" — autoriza implementar las ideas para revisión local en rama feature.
+- L3: Implementación completa en `feat/valor-visual-demo` (T1–T9: 596bd31, 1be7772, c71b922, f4b50eb, 672d4df, dfaf196, 1b8a592, b33a961, 5951138). Verificación: `pnpm build` OK (Next 14.2.35, tipos y lint OK); verificación end-to-end en Chrome: bienvenida 3 pasos con personalización en vivo (sidebar + crumb = "Consultorio La Esperanza"), tour auto-inicia tras la bienvenida y se cierra con flag visto, reserva online end-to-end (Ana Prueba · 15:30 → aparece en Agenda como Pendiente $18.500), simulación de lista de espera automática (Agustina) y manual (Nicolás · 14:00, waitlist → 0), burbuja WhatsApp reactiva al confirmar turno de Ana, CTA con clínica precargada y toast "¡Gracias! Te contactamos...", canales WhatsApp/Email activos (default WhatsApp), rótulos DEMO presentes en Pagos y Media.
+- L4: Pendiente (fuera de alcance, decisión del usuario): página de precios. El push y el PR contra develop quedan como decisión del usuario (requieren issue aprobado por AGENTS.md).
