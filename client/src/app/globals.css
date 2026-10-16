@@ -117,3 +117,26 @@
 .rsv-url{display:none}
 .tour-card{width:min(290px,calc(100vw - 24px))}
 }
+
+/* valor-visual-demo: timeline del dia */
+.view-switch{display:flex;background:#f3f4f8;border-radius:8px;padding:2px;gap:2px}
+.view-switch button{display:flex;align-items:center;gap:4px;border:none;background:transparent;border-radius:6px;padding:5px 9px;font-size:9px;font-weight:600;color:var(--sub)}
+.view-switch button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px #2024361f}
+.timeline{display:flex;gap:8px;padding:14px 16px 16px;overflow-x:auto}
+.tl-gutter{width:52px;flex-shrink:0}
+.tl-gutter-head{height:46px}
+.tl-gutter div:last-child span{display:flex;align-items:flex-start;justify-content:flex-end;padding-right:8px;font-size:8px;color:var(--faint);height:32px}
+.tl-col{flex:1;min-width:200px;background:#fbfbfd;border:1px solid var(--line);border-radius:11px;overflow:hidden;display:flex;flex-direction:column}
+.tl-col.dim{opacity:.45}
+.tl-col-head{display:flex;align-items:center;gap:8px;padding:7px 10px;background:#fff;border-bottom:1px solid var(--line);height:46px;box-sizing:border-box}
+.tl-col-head strong{font-size:10px;display:block;white-space:nowrap}
+.tl-col-head small{font-size:8px;color:var(--faint)}
+.tl-slots{position:relative;flex:1;background:repeating-linear-gradient(to bottom,#fff 0,#fff 31px,var(--line) 31px,var(--line) 32px)}
+.tl-block{position:absolute;left:6px;right:6px;border-radius:8px;border:none;text-align:left;padding:4px 8px;overflow:hidden;box-shadow:0 2px 6px #20243614;display:flex;flex-direction:column;gap:1px;cursor:pointer}
+.tl-block strong{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-block small{font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.9}
+.tl-block.pending{background:#fdf3e3;color:#8a5b14;border-left:3px solid #e2a35b}
+.tl-block.confirmed{background:#efedff;color:#4c43b8;border-left:3px solid #766ee1}
+.tl-block.done{background:#e8f7ef;color:#1d7a5f;border-left:3px solid #249879}
+.tl-block.cancelled,.tl-block.noshow{background:#f3f4f7;color:#8f94a3;border-left:3px solid #c3c7d1}
+.tl-block.cancelled strong,.tl-block.noshow strong{text-decoration:line-through}
