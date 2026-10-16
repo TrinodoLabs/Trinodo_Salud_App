@@ -74,10 +74,13 @@ export default function Home() {
   const [clinicalTemplates, setClinicalTemplates] = useState<ClinicalTemplate[]>([{id:"motivo",title:"Motivo de consulta"},{id:"observaciones",title:"Observaciones"},{id:"diagnostico",title:"Diagnóstico"},{id:"tratamiento",title:"Tratamiento / receta"},{id:"estudios",title:"Estudios solicitados"}]);
   const [clinicName, setClinicName] = useState("Clínica Santa Clara");
   const [welcomeStep, setWelcomeStep] = useState(0);
+  const [whats, setWhats] = useState<{name:string;text:string}|null>(null);
 
   useEffect(() => { try { const saved = localStorage.getItem("trinodo-demo-appointments"); if (saved) setAppointments(JSON.parse(saved)); } catch {} finally { setAppointmentsLoaded(true); } }, []);
   useEffect(() => { try { const saved = localStorage.getItem("trinodo-demo-clinical-templates"); if (saved) setClinicalTemplates(JSON.parse(saved)); } catch {} }, []);
   useEffect(() => { try { const n = localStorage.getItem("trinodo-demo-clinic-name"); if (n && n.trim()) setClinicName(n); if (!localStorage.getItem("trinodo-demo-welcome-seen")) setWelcomeStep(1); } catch {} }, []);
+  useEffect(() => { try { if (localStorage.getItem("trinodo-demo-whats-seen")) return; const t = window.setTimeout(()=>{try{localStorage.setItem("trinodo-demo-whats-seen","1")}catch{}setWhats({name:"Camila Torres",text:"¡Hola! Confirmo mi turno de hoy a las 10:00 🙌"});},7000); return ()=>window.clearTimeout(t); } catch {} }, []);
+  useEffect(() => { if (!whats) return; const t = window.setTimeout(()=>setWhats(null), 9000); return ()=>window.clearTimeout(t); }, [whats]);
   useEffect(() => { if (toast) { const t = setTimeout(() => setToast(""), 3200); return () => clearTimeout(t); } }, [toast]);
   useEffect(() => {
     if (!appointmentsLoaded) return;
@@ -113,7 +116,7 @@ export default function Home() {
   function updateClinicalTemplates(next: ClinicalTemplate[]) { setClinicalTemplates(next); try { localStorage.setItem("trinodo-demo-clinical-templates", JSON.stringify(next)); } catch {} }
   function notify(message: string) { setToast(message); }
   function finishWelcome(target?: string) { setWelcomeStep(0); try { localStorage.setItem("trinodo-demo-welcome-seen", "1"); } catch {} if (target) setPage(target); }
-  function changeStatus(a: Appointment, status: Status) { const next = appointments.map(item => item.id === a.id ? { ...item, status } : item); updateStore(next); notify(status === "Confirmada" ? `Turno confirmado. Email enviado a ${a.email}` : status === "Atendida" ? "Consulta marcada como atendida" : status === "No asistió" ? "Inasistencia registrada en el historial" : "Estado actualizado"); }
+  function changeStatus(a: Appointment, status: Status) { const next = appointments.map(item => item.id === a.id ? { ...item, status } : item); updateStore(next); notify(status === "Confirmada" ? `Turno confirmado. Enviado a ${a.email}` : status === "Atendida" ? "Consulta marcada como atendida" : status === "No asistió" ? "Inasistencia registrada en el historial" : "Estado actualizado"); if (status === "Confirmada") { const when = new Date(`${a.date}T12:00:00`).toLocaleDateString("es-AR",{day:"numeric",month:"long"}); window.setTimeout(()=>setWhats({name:a.patient,text:`¡Listo, confirmo! Nos vemos el ${when} a las ${a.time} ✅`}),1400); } }
   function markPaid(a: Appointment) { updateStore(appointments.map(item => item.id === a.id ? { ...item, payment: "Pagado" } : item)); notify("Pago registrado para esta cita"); }
   function exportCsv() { const rows = [["Fecha","Hora","Paciente","Profesional","Servicio","Estado","Pago","Monto"], ...visibleAppointments.map(a => [a.date,a.time,a.patient,a.doctor,a.service,a.status,a.payment,String(a.amount)])]; const csv = rows.map(r=>r.map(x=>`"${x.replaceAll('"','""')}"`).join(",")).join("\n"); const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"})); link.download = `agenda-${date}.csv`; link.click(); URL.revokeObjectURL(link.href); notify("Listado CSV descargado"); }
   function navigateDay(offset: number) { const d = new Date(`${date}T12:00:00`); d.setDate(d.getDate()+offset); setDate(dateKey(d)); }
@@ -195,6 +198,7 @@ export default function Home() {
       </div>
     </section></div>}
     {modal && <Modal key={`${modal}-${selected?.id||"new"}`} type={modal} onClose={()=>setModal(null)} appointments={appointments} updateStore={updateStore} clinicalTemplates={clinicalTemplates} updateClinicalTemplates={updateClinicalTemplates} onOpenClinical={(a)=>{setSelected(a);setModal("clinical")}} notify={notify} busy={busy} setBusy={setBusy} selected={selected} selectedPatient={selectedPatient} setSelectedPatient={setSelectedPatient} serviceList={serviceList} setServiceList={setServiceList} clinicName={clinicName} waitlist={waitlist} setWaitlist={setWaitlist}/>}
+    {whats&&<div className="whats-bubble"><div className="whats-head"><span className="whats-ic"><MessageCircle size={13}/></span><strong>{whats.name}</strong><small>WhatsApp · ahora</small><button aria-label="Cerrar" onClick={()=>setWhats(null)}><X size={13}/></button></div><p>{whats.text}</p><span className="whats-note">Confirmación automática · sin llamadas</span></div>}
     {toast&&<div className="toast"><span><Check size={15}/></span>{toast}<button onClick={()=>setToast("")}><X size={15}/></button></div>}
   </main>;
 }
