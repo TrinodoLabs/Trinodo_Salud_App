@@ -55,3 +55,14 @@
 .whats-bubble p{margin:0;padding:10px 12px;font-size:10.5px;line-height:1.5;color:var(--ink);background:#f7fcf9}
 .whats-note{display:block;padding:0 12px 9px;font-size:8.5px;color:var(--faint)}
 @keyframes whats-in{from{transform:translateY(14px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+
+/* valor-visual-demo: lista de espera magia */
+.wait-magic{display:flex;gap:9px;align-items:flex-start;margin-top:9px;padding:10px 11px;border-radius:10px;background:#f2fbf6;border:1px solid #d3efdf;animation:toast-in .25s ease-out}
+.wait-magic.offering{background:#fff9ef;border-color:#f0e2c8}
+.wait-magic-ic{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;flex-shrink:0;background:#c98227}
+.wait-magic.accepted .wait-magic-ic{background:#249879}
+.wait-magic strong{font-size:10px;display:block}
+.wait-magic p{margin:2px 0 0;font-size:9px;color:var(--sub);line-height:1.4}
+.wait-row strong{font-weight:700}
+.wait-row.offering{animation:pulse-row 1.2s infinite}
+@keyframes pulse-row{0%,100%{background:transparent}50%{background:#fdf6e8}}

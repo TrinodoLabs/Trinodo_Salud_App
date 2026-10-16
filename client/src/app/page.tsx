@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Activity, ArrowDown, ArrowUpRight, Bell, CalendarDays, Check, ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clock3, Download, FileText, Filter, HeartPulse, ImagePlus, LayoutDashboard, ListFilter, LogOut, Mail, Menu, MessageCircle, MoreHorizontal, Plus, Search, Settings2, ShieldCheck, SlidersHorizontal, Sparkles, Stethoscope, Users, Wallet, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Activity, ArrowDown, ArrowUpRight, Bell, CalendarDays, Check, ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clock3, Download, FileText, Filter, HeartPulse, ImagePlus, LayoutDashboard, ListFilter, LogOut, Mail, Menu, MessageCircle, MoreHorizontal, Plus, Search, Settings2, ShieldCheck, SlidersHorizontal, Sparkles, Stethoscope, Users, Wallet, X, Zap } from "lucide-react";
 
 type Status = "Pendiente" | "Confirmada" | "Atendida" | "Cancelada" | "No asistió";
 type ClinicalItem = { id: string; title: string; content: string };
 type ClinicalTemplate = { id: string; title: string };
+type WaitItem = { id: number; name: string; service: string; preferred: string };
 type Appointment = { id: number; patient: string; initials: string; color: string; email: string; phone: string; service: string; doctor: string; time: string; duration: number; status: Status; payment: "Pagado" | "Pendiente"; amount: number; reason?: string; date: string; clinicalItems?: ClinicalItem[] };
 type Patient = { name: string; initials: string; color: string; email: string; phone: string; birth: string; visits: number; lastVisit: string; balance: number };
 
@@ -66,7 +67,9 @@ export default function Home() {
   const [busy, setBusy] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
   const [patientSearch, setPatientSearch] = useState("");
-  const [waitlist, setWaitlist] = useState(["Agustina Flores · Consulta clínica · 16:30 preferido", "Nicolás Vega · Control general · Sin horario"]);
+  const [waitlist, setWaitlist] = useState<WaitItem[]>([{id:1,name:"Agustina Flores",service:"Consulta clínica",preferred:"16:30"},{id:2,name:"Nicolás Vega",service:"Control general",preferred:""}]);
+  const [waitSim, setWaitSim] = useState<{phase:"offering"|"accepted";slot:string}|null>(null);
+  const waitSimBusy = useRef(false);
   const [reminders, setReminders] = useState(true);
   const [reminderDay, setReminderDay] = useState("1 día antes");
   const [serviceList, setServiceList] = useState(services);
@@ -80,6 +83,7 @@ export default function Home() {
   useEffect(() => { try { const saved = localStorage.getItem("trinodo-demo-clinical-templates"); if (saved) setClinicalTemplates(JSON.parse(saved)); } catch {} }, []);
   useEffect(() => { try { const n = localStorage.getItem("trinodo-demo-clinic-name"); if (n && n.trim()) setClinicName(n); if (!localStorage.getItem("trinodo-demo-welcome-seen")) setWelcomeStep(1); } catch {} }, []);
   useEffect(() => { try { if (localStorage.getItem("trinodo-demo-whats-seen")) return; const t = window.setTimeout(()=>{try{localStorage.setItem("trinodo-demo-whats-seen","1")}catch{}setWhats({name:"Camila Torres",text:"¡Hola! Confirmo mi turno de hoy a las 10:00 🙌"});},7000); return ()=>window.clearTimeout(t); } catch {} }, []);
+  useEffect(() => { try { if (localStorage.getItem("trinodo-demo-waitsim-seen")) return; const t = window.setTimeout(()=>{try{localStorage.setItem("trinodo-demo-waitsim-seen","1")}catch{}simulateWaitFill();},16000); return ()=>window.clearTimeout(t); } catch {} }, []);
   useEffect(() => { if (!whats) return; const t = window.setTimeout(()=>setWhats(null), 9000); return ()=>window.clearTimeout(t); }, [whats]);
   useEffect(() => { if (toast) { const t = setTimeout(() => setToast(""), 3200); return () => clearTimeout(t); } }, [toast]);
   useEffect(() => {
@@ -116,6 +120,25 @@ export default function Home() {
   function updateClinicalTemplates(next: ClinicalTemplate[]) { setClinicalTemplates(next); try { localStorage.setItem("trinodo-demo-clinical-templates", JSON.stringify(next)); } catch {} }
   function notify(message: string) { setToast(message); }
   function finishWelcome(target?: string) { setWelcomeStep(0); try { localStorage.setItem("trinodo-demo-welcome-seen", "1"); } catch {} if (target) setPage(target); }
+  function simulateWaitFill() {
+    if (waitSimBusy.current || waitlist.length===0) return;
+    waitSimBusy.current = true;
+    const first = waitlist[0];
+    const svc = serviceList.find(s=>s.name===first.service) || serviceList[0];
+    const doc = svc.doctor;
+    const taken = new Set(appointments.filter(a=>a.date===dateKey(today)&&a.doctor===doc&&a.status!=="Cancelada").map(a=>a.time));
+    const slot = first.preferred && !taken.has(first.preferred) ? first.preferred : (times.filter(t=>t>="14:00").find(t=>!taken.has(t)) || "17:30");
+    setWaitSim({phase:"offering",slot});
+    window.setTimeout(()=>setWaitSim({phase:"accepted",slot}), 2600);
+    window.setTimeout(()=>{
+      const ap: Appointment = { id: Date.now(), patient: first.name, initials: first.name.split(" ").map(x=>x[0]).slice(0,2).join("").toUpperCase(), color: "mint", email: "", phone: "", service: svc.name, doctor: doc, time: slot, duration: svc.duration, status: "Confirmada", payment: "Pendiente", amount: svc.price, date: dateKey(today) };
+      setAppointments(prev => { const next=[...prev, ap]; try{localStorage.setItem("trinodo-demo-appointments",JSON.stringify(next))}catch{} return next; });
+      setWaitlist(prev => prev.filter(x=>x.id!==first.id));
+      setWaitSim(null);
+      setWhats({name:first.name, text:`¡Genial, acepto el turno de las ${slot}! Ahí voy 🙏`});
+      waitSimBusy.current = false;
+    }, 5400);
+  }
   function changeStatus(a: Appointment, status: Status) { const next = appointments.map(item => item.id === a.id ? { ...item, status } : item); updateStore(next); notify(status === "Confirmada" ? `Turno confirmado. Enviado a ${a.email}` : status === "Atendida" ? "Consulta marcada como atendida" : status === "No asistió" ? "Inasistencia registrada en el historial" : "Estado actualizado"); if (status === "Confirmada") { const when = new Date(`${a.date}T12:00:00`).toLocaleDateString("es-AR",{day:"numeric",month:"long"}); window.setTimeout(()=>setWhats({name:a.patient,text:`¡Listo, confirmo! Nos vemos el ${when} a las ${a.time} ✅`}),1400); } }
   function markPaid(a: Appointment) { updateStore(appointments.map(item => item.id === a.id ? { ...item, payment: "Pagado" } : item)); notify("Pago registrado para esta cita"); }
   function exportCsv() { const rows = [["Fecha","Hora","Paciente","Profesional","Servicio","Estado","Pago","Monto"], ...visibleAppointments.map(a => [a.date,a.time,a.patient,a.doctor,a.service,a.status,a.payment,String(a.amount)])]; const csv = rows.map(r=>r.map(x=>`"${x.replaceAll('"','""')}"`).join(",")).join("\n"); const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"})); link.download = `agenda-${date}.csv`; link.click(); URL.revokeObjectURL(link.href); notify("Listado CSV descargado"); }
@@ -157,7 +180,7 @@ export default function Home() {
             <div className="table-footer"><span>Mostrando <strong>{visibleAppointments.length}</strong> de <strong>{dayAppointments.length}</strong> turnos</span><div><button disabled><ChevronLeft size={15}/></button><button className="current-page">1</button><button disabled><ChevronRight size={15}/></button></div></div>
           </section>
           <aside className="right-rail"><section className="rail-card"><div className="rail-heading"><div><h3>Profesionales</h3><p>Agenda de hoy</p></div><button onClick={()=>setPage("Profesionales")} className="link-arrow"><ArrowUpRight size={16}/></button></div>{["Dra. Valentina Ríos","Dr. Tomás Herrera"].map((d,i)=>{const number=dayAppointments.filter(a=>a.doctor===d).length;return <button className={`doctor-summary ${doctor===d?"selected":""}`} key={d} onClick={()=>setDoctor(doctor===d?doctors[0]:d)}><Avatar initials={i===0?"VR":"TH"} color={i===0?"lavender":"mint"}/><span className="doc-details"><strong>{d}</strong><small>{i===0?"Clínica médica":"Cardiología"}</small></span><span className="doctor-appointments">{number}<small>turnos</small></span></button>})}<button className="all-doctors" onClick={()=>setDoctor(doctors[0])}>Ver agenda completa <ChevronRight size={14}/></button></section>
-            <section className="rail-card waitlist-card"><div className="rail-heading"><div><h3>Lista de espera</h3><p>{waitlist.length} pacientes esperando</p></div><span className="waitlist-count">{waitlist.length}</span></div>{waitlist.map((w,i)=><div className="wait-row" key={w}><span className="wait-num">0{i+1}</span><span>{w}</span><button onClick={()=>{setWaitlist(waitlist.filter(x=>x!==w));notify("Paciente retirado de la lista de espera")}}><X size={14}/></button></div>)}<button className="add-wait" onClick={()=>notify("Agregá a la lista de espera desde el perfil del paciente")}><Plus size={14}/> Agregar paciente</button></section>
+            <section className="rail-card waitlist-card"><div className="rail-heading"><div><h3>Lista de espera</h3><p>{waitSim?"Llenando hueco…":`${waitlist.length} pacientes esperando`}</p></div><span className="waitlist-count">{waitlist.length}</span></div>{waitlist.map((w,i)=><div className={`wait-row ${waitSim&&i===0?"offering":""}`} key={w.id}><span className="wait-num">0{i+1}</span><span><strong>{w.name}</strong> · {w.service} · {w.preferred?`${w.preferred} preferido`:"sin horario"}</span><button aria-label={`Quitar ${w.name}`} onClick={()=>{setWaitlist(waitlist.filter(x=>x.id!==w.id));notify("Paciente retirado de la lista de espera")}}><X size={14}/></button></div>)}{waitSim&&waitlist[0]&&<div className={`wait-magic ${waitSim.phase}`}><span className="wait-magic-ic">{waitSim.phase==="offering"?<Clock3 size={13}/>:<Check size={13}/>}</span><div><strong>{waitSim.phase==="offering"?`Se liberó un turno · ${waitSim.slot}`:`¡${waitlist[0].name} aceptó el ${waitSim.slot}!`}</strong><p>{waitSim.phase==="offering"?`Ofreciendo el hueco a ${waitlist[0].name} por WhatsApp…`:"Turno agendado y confirmado en la agenda"}</p></div></div>}<button className="add-wait" disabled={!!waitSim||waitlist.length===0} onClick={simulateWaitFill}><Zap size={14}/> {waitSim?"Llenando hueco…":"Simular hueco liberado"}</button></section>
             <section className="reminder-card"><div className="reminder-top"><span className="reminder-icon"><Mail size={17}/></span><span className="reminder-toggle"><input aria-label="Activar recordatorios" type="checkbox" checked={reminders} onChange={e=>setReminders(e.target.checked)}/></span></div><strong>Recordatorios por email</strong><p>{reminders?"Confirmación inmediata y recordatorio":"Los recordatorios están desactivados"}</p><label className="reminder-select"><select value={reminderDay} onChange={e=>setReminderDay(e.target.value)}><option>1 día antes</option><option>2 días antes</option><option>3 días antes</option></select><ChevronDown size={13}/></label></section>
           </aside></div>
           <div className="bottom-note"><ShieldCheck size={15}/> Tus datos están protegidos y solo son visibles para el equipo de la clínica.<button onClick={()=>notify("Más información sobre privacidad")}>Más información <ArrowUpRight size={13}/></button><span>Última actualización hace un momento</span></div>
@@ -208,7 +231,7 @@ function AppointmentMenu({ appointment, onClinical, onStatus, onEdit, onNotify }
   return <div className="row-menu"><button className="more-button" onClick={()=>setOpen(!open)}><MoreHorizontal size={18}/></button>{open&&<><button className="menu-dismiss" onClick={()=>setOpen(false)}/><div className="dropdown-menu"><button onClick={()=>{onClinical();setOpen(false)}}><FileText size={14}/> Abrir atención clínica</button><button onClick={()=>{onEdit();setOpen(false)}}><FileText size={14}/> Ver / editar turno</button>{appointment.status==="Pendiente"&&<button onClick={()=>{onStatus("Confirmada");setOpen(false)}}><Check size={14}/> Confirmar turno</button>}{appointment.status==="Confirmada"&&<button onClick={()=>{onStatus("Atendida");setOpen(false)}}><Check size={14}/> Marcar atendido</button>}{appointment.status!=="Cancelada"&&appointment.status!=="No asistió"&&<button onClick={()=>{onStatus("No asistió");setOpen(false)}}><X size={14}/> Marcar no asistió</button>}<button onClick={()=>{onNotify();setOpen(false)}}><Mail size={14}/> Reenviar confirmación</button>{appointment.status!=="Cancelada"&&<button className="danger-action" onClick={()=>{onStatus("Cancelada");setOpen(false)}}><X size={14}/> Cancelar turno</button>}</div></>}</div>;
 }
 
-function Modal({ type, onClose, appointments, updateStore, notify, busy, setBusy, selected, selectedPatient, setSelectedPatient, serviceList, setServiceList, clinicName, waitlist, setWaitlist, clinicalTemplates, updateClinicalTemplates, onOpenClinical }: { type: "appointment"|"patient"|"cancel"|"profile"|"service"|"clinical"|"cta"; onClose: ()=>void; appointments: Appointment[]; updateStore: (a:Appointment[])=>void; notify: (s:string)=>void; busy:boolean; setBusy:(b:boolean)=>void; selected: Appointment|null; selectedPatient:Patient|null; setSelectedPatient:(p:Patient|null)=>void; serviceList:typeof services; setServiceList:(s:typeof services)=>void; clinicName:string; waitlist:string[]; setWaitlist:(s:string[])=>void; clinicalTemplates:ClinicalTemplate[]; updateClinicalTemplates:(t:ClinicalTemplate[])=>void; onOpenClinical:(a:Appointment)=>void }) {
+function Modal({ type, onClose, appointments, updateStore, notify, busy, setBusy, selected, selectedPatient, setSelectedPatient, serviceList, setServiceList, clinicName, waitlist, setWaitlist, clinicalTemplates, updateClinicalTemplates, onOpenClinical }: { type: "appointment"|"patient"|"cancel"|"profile"|"service"|"clinical"|"cta"; onClose: ()=>void; appointments: Appointment[]; updateStore: (a:Appointment[])=>void; notify: (s:string)=>void; busy:boolean; setBusy:(b:boolean)=>void; selected: Appointment|null; selectedPatient:Patient|null; setSelectedPatient:(p:Patient|null)=>void; serviceList:typeof services; setServiceList:(s:typeof services)=>void; clinicName:string; waitlist:WaitItem[]; setWaitlist:(w:WaitItem[])=>void; clinicalTemplates:ClinicalTemplate[]; updateClinicalTemplates:(t:ClinicalTemplate[])=>void; onOpenClinical:(a:Appointment)=>void }) {
   const [patient,setPatient]=useState(selected?.patient||""); const [email,setEmail]=useState(selected?.email||""); const [doctor,setDoctor]=useState(selected?.doctor||doctors[1]); const [service,setService]=useState(selected?.service||services[0].name); const [date,setDate]=useState(selected?.date||dateKey(today)); const [time,setTime]=useState(selected?.time||"09:00"); const [cancelReason,setCancelReason]=useState(""); const [amount,setAmount]=useState(String(services.find(s=>s.name===service)?.price||18500)); const [phone,setPhone]=useState(""); const [birth,setBirth]=useState(""); const [message,setMessage]=useState(""); const [profileTab,setProfileTab]=useState("Datos generales");
   const [clinicalItems,setClinicalItems]=useState<ClinicalItem[]>(selected?.clinicalItems||[]);
   const selectedService=services.find(s=>s.name===service)||services[0];
