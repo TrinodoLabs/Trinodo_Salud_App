@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Activity, ArrowDown, ArrowUpRight, Bell, CalendarDays, Check, ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clock3, Download, FileText, Filter, Globe, HeartPulse, ImagePlus, LayoutDashboard, ListFilter, LogOut, Mail, Menu, MoreHorizontal, Plus, Phone, Search, Settings2, ShieldCheck, SlidersHorizontal, Sparkles, Star, Stethoscope, Users, Upload, Wallet, X, Zap } from "lucide-react";
+import { Activity, ArrowDown, ArrowUpRight, Bell, CalendarDays, Check, ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clock3, Download, FileText, Filter, Globe, HeartPulse, ImagePlus, ListFilter, LogOut, Mail, Menu, MoreHorizontal, Plus, Phone, Search, Settings2, ShieldCheck, SlidersHorizontal, Sparkles, Star, Stethoscope, Users, Upload, Wallet, X, Zap } from "lucide-react";
 
 type Status = "Pendiente" | "Confirmada" | "Atendida" | "Cancelada" | "No asistió";
 type ClinicalItem = { id: string; title: string; content: string };
@@ -64,7 +64,7 @@ function avgStars(p: ProProfile): string { return p.reviews.length ? (p.reviews.
 export default function Home() {
   const [appointments, setAppointments] = useState(initialAppointments);
   const [appointmentsLoaded, setAppointmentsLoaded] = useState(false);
-  const [page, setPage] = useState("Turnos de hoy");
+  const [page, setPage] = useState("Agenda");
   const [patientList, setPatientList] = useState(patients);
   const [proProfiles, setProProfiles] = useState(professionalProfiles);
   const [selectedPro, setSelectedPro] = useState<ProProfile|null>(null);
@@ -174,7 +174,7 @@ export default function Home() {
   function exportCsv() { const rows = [["Fecha","Hora","Paciente","Profesional","Servicio","Estado","Pago","Monto"], ...visibleAppointments.map(a => [a.date,a.time,a.patient,a.doctor,a.service,a.status,a.payment,String(a.amount)])]; const csv = rows.map(r=>r.map(x=>`"${x.replaceAll('"','""')}"`).join(",")).join("\n"); const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"})); link.download = `agenda-${date}.csv`; link.click(); URL.revokeObjectURL(link.href); notify("Listado CSV descargado"); }
   function navigateDay(offset: number) { const d = new Date(`${date}T12:00:00`); d.setDate(d.getDate()+offset); setDate(dateKey(d)); }
 
-  const navItems = [{ label: "Turnos de hoy", icon: LayoutDashboard }, { label: "Agenda", icon: CalendarDays }, { label: "Pacientes", icon: Users }, { label: "Profesionales", icon: Stethoscope }, { label: "Servicios", icon: FileText }, { label: "Reserva online", icon: Globe }, { label: "Notas clínicas", icon: FileText }, { label: "Pagos", icon: Wallet }];
+  const navItems = [{ label: "Agenda", icon: CalendarDays }, { label: "Pacientes", icon: Users }, { label: "Profesionales", icon: Stethoscope }, { label: "Servicios", icon: FileText }, { label: "Reserva online", icon: Globe }, { label: "Notas clínicas", icon: FileText }, { label: "Pagos", icon: Wallet }];
   const formatted = new Date(`${date}T12:00:00`).toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" });
   const clinicInitials = clinicName.split(" ").filter(Boolean).slice(0, 2).map(w => w[0]).join("").toUpperCase() || "CS";
   const tourSteps = [
@@ -200,8 +200,8 @@ export default function Home() {
     <section className="main-column">
       <header className="topbar"><div className="crumb"><button className="menu-toggle icon-button" onClick={()=>setNavOpen(true)}><Menu size={19}/></button><span>{clinicName}</span><ChevronRight size={14}/><strong>{page}</strong></div><div className="top-actions"><div className="demo-pill"><span/> Demo interactiva</div><button className="icon-button notification" onClick={()=>notify("No tenés notificaciones nuevas")}><Bell size={18}/><i/></button><button className="top-avatar" onClick={()=>setModal("profile")}>MR</button></div></header>
       <div className="content">
-        {page === "Agenda" || page === "Turnos de hoy" ? <>
-          <div className="page-heading"><div><div className="eyebrow"><span className="eyebrow-dot"/> GESTIÓN DE TURNOS</div><h1>{page === "Agenda" ? "Agenda" : "Turnos de hoy"}</h1><p>Hola, María. Esto es lo que pasa hoy en tu clínica.</p></div><button className="primary-button" onClick={()=>setModal("appointment")}><Plus size={17}/> Nuevo turno</button></div>
+        {page === "Agenda" ? <>
+          <div className="page-heading"><div><div className="eyebrow"><span className="eyebrow-dot"/> GESTIÓN DE TURNOS</div><h1>Agenda</h1><p>Hola, María. Esto es lo que pasa hoy en tu clínica.</p></div><button className="primary-button" onClick={()=>setModal("appointment")}><Plus size={17}/> Nuevo turno</button></div>
           <div className="stats-grid" ref={el=>{tourRefs.current["stats"]=el;}}>
             <div className="stat-card"><div className="stat-head"><span>Citas de hoy</span><span className="stat-icon purple"><CalendarDays size={17}/></span></div><div className="stat-number">{countToday}<span className={`stat-compare ${confirmPct>=60?"positive":"neutral"}`}><ArrowUpRight size={14}/> {confirmPct}%</span></div><div className="stat-foot">confirmados o atendidos, calculado con tus datos</div><div className="mini-bars"><i/><i/><i/><i/><i/><i/><i className="bar-active"/></div></div>
             <div className="stat-card"><div className="stat-head"><span>Pendientes</span><span className="stat-icon amber"><Clock3 size={17}/></span></div><div className="stat-number">{waiting}<span className="stat-compare neutral">por confirmar</span></div><div className="stat-foot">de {countToday} turnos programados</div><div className="progress-track"><i style={{width:`${countToday?waiting/countToday*100:0}%`}}/></div></div>
