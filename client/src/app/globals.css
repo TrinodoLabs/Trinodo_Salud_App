@@ -36,3 +36,11 @@
 .welcome-actions .primary-button,.welcome-actions .secondary-button{margin-top:0;padding:9px 12px;font-size:10.5px}
 .ghost-link{background:none;border:none;color:var(--faint);font-size:10px;margin-left:auto}
 .ghost-link:hover{color:var(--sub)}
+
+/* valor-visual-demo: cta sidebar */
+.cta-card{border:1px solid #eee7f8;background:linear-gradient(145deg,#f6f4ff,#fbf9ff);border-radius:11px;padding:13px 12px;margin:14px 0 13px}
+.cta-card strong{font:700 12px var(--font-head);display:block;letter-spacing:-.2px}
+.cta-card p{color:var(--sub);font-size:10px;margin:4px 0 10px;line-height:1.45}
+.cta-icon{width:30px;height:30px;border-radius:9px;background:#e9e5fd;color:#6a61d9;display:grid;place-items:center;margin-bottom:8px}
+.cta-card button{width:100%;display:flex;align-items:center;justify-content:center;gap:5px;background:#7169dd;color:#fff;border:none;border-radius:8px;padding:9px 10px;font-size:10px;font-weight:600;box-shadow:0 3px 8px #7169dd33}
+.cta-card button:hover{background:#6158cb}
