@@ -114,3 +114,21 @@
 
 /* valor-visual-demo: rotulos demo */
 .demo-tag{display:inline-flex;align-items:center;background:#eceafc;color:#6a61d9;font-size:7.5px;font-weight:800;letter-spacing:.8px;border-radius:4px;padding:2px 5px;margin-right:5px;vertical-align:2px}
+
+/* valor-visual-demo: recorrido guiado */
+.tour-hole{position:fixed;z-index:80;border-radius:13px;box-shadow:0 0 0 200vmax #20253a66;pointer-events:none;transition:all .3s ease}
+.tour-card{position:fixed;z-index:81;width:290px;background:#fff;border-radius:12px;padding:14px 15px;box-shadow:0 18px 50px #10142640;animation:toast-in .25s ease-out}
+.tour-count{font-size:8.5px;font-weight:800;letter-spacing:1px;color:#8f86ea;text-transform:uppercase;margin-bottom:5px}
+.tour-card h4{font:800 13.5px var(--font-head);margin:0 0 5px;letter-spacing:-.3px}
+.tour-card p{color:var(--sub);font-size:10px;line-height:1.5;margin:0 0 11px}
+.tour-btns{display:flex;align-items:center;gap:7px}
+.tour-btns .primary-button,.tour-btns .secondary-button{margin-top:0;padding:7px 11px;font-size:10px}
+.tour-btns .ghost-link{margin-left:auto}
+
+/* valor-visual-demo: responsive elementos de demo */
+@media(max-width:720px){
+.welcome-card{padding:20px 16px}
+.rsv-url{display:none}
+.whats-bubble{right:12px;bottom:70px;width:calc(100vw - 60px)}
+.tour-card{width:min(290px,calc(100vw - 24px))}
+}
