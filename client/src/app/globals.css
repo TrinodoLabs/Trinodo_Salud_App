@@ -171,3 +171,9 @@
 .pro-rate-stars button.on{color:#f2b63c}
 .pro-rate-stars button.on svg{fill:#f2b63c}
 .pro-rate input{border:1px solid #e7e9ee;border-radius:6px;padding:9px 10px;font-size:10px;width:100%}
+
+/* valor-visual-demo: servicios editables */
+.toggle-switch.sm{width:30px;height:17px}
+.toggle-switch.sm span{width:13px;height:13px}
+.toggle-switch.sm span.on{transform:translateX(13px)}
+.service-visible button.toggle-switch{margin-left:auto;background:#d7d9e1;padding:2px}
