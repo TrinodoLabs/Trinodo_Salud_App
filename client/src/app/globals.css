@@ -74,3 +74,6 @@
 .save-rows span{display:flex;justify-content:space-between;font-size:9.5px;color:var(--sub)}
 .save-rows strong{color:var(--ink);font-weight:700}
 .save-note{display:block;margin-top:8px;font-size:8px;color:var(--faint)}
+
+/* valor-visual-demo: canal de recordatorios */
+.reminder-select+.reminder-select{margin-top:6px}
