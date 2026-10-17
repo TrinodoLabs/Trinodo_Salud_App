@@ -105,29 +105,22 @@
 /* valor-visual-demo: ficha de profesional y calificaciones */
 .professional-card.clickable{cursor:pointer;transition:transform .15s,box-shadow .15s}
 .professional-card.clickable:hover{transform:translateY(-2px);box-shadow:0 8px 22px #20243612}
-.professional-rating{display:flex;align-items:center;gap:4px;font-size:9px;color:var(--sub);margin:5px 0 0}
-.professional-rating svg{fill:#f2b63c;color:#f2b63c}
-.professional-rating strong{color:var(--ink);font-size:9.5px}
+
+
 .pro-profile{display:flex;align-items:center;gap:11px;padding:2px 0 12px}
 .pro-profile strong{font:800 14px var(--font-head);display:block;letter-spacing:-.3px}
 .pro-profile span{font-size:10px;color:#7d78b7}
 .pro-profile small{display:block;font-size:9px;color:var(--faint);margin-top:2px}
-.pro-stars{margin-left:auto;display:flex;align-items:center;gap:4px;background:#fdf6e3;color:#8a5b14;border-radius:99px;padding:5px 10px;font-size:10px;font-weight:700}
-.pro-stars svg{fill:#f2b63c;color:#f2b63c}
-.pro-reviews{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
-.pro-review{border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:#fafafd}
-.pro-review-head{display:flex;align-items:center;gap:7px}
-.pro-review-head strong{font-size:9.5px}
-.pro-review-head small{margin-left:auto;color:var(--faint);font-size:8px}
-.pro-review-stars{display:inline-flex;gap:1px}
-.pro-review-stars svg{fill:#f2b63c;color:#f2b63c}
-.pro-review p{margin:4px 0 0;font-size:9.5px;color:#656a79;line-height:1.5}
-.pro-rate{display:flex;flex-direction:column;gap:8px;padding:11px;border:1px dashed #d9d4f5;border-radius:10px;background:#fbfaff}
-.pro-rate-stars{display:flex;gap:4px}
-.pro-rate-stars button{background:none;border:none;padding:2px;color:#d5d8e0;display:grid;place-items:center}
-.pro-rate-stars button.on{color:#f2b63c}
-.pro-rate-stars button.on svg{fill:#f2b63c}
-.pro-rate input{border:1px solid #e7e9ee;border-radius:6px;padding:9px 10px;font-size:10px;width:100%}
+
+
+
+
+
+
+
+
+
+
 
 /* valor-visual-demo: servicios editables */
 .toggle-switch.sm{width:30px;height:17px}
