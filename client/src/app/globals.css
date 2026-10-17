@@ -48,14 +48,6 @@
 .wait-row.offering{animation:pulse-row 1.2s infinite}
 @keyframes pulse-row{0%,100%{background:transparent}50%{background:#fdf6e8}}
 
-/* valor-visual-demo: tiempo ahorrado */
-.save-card{border:1px solid #e8ecf6;background:linear-gradient(145deg,#fbfcff,#f5f6ff)}
-.save-badge{display:inline-flex;align-items:center;gap:4px;background:#7169dd;color:#fff;border-radius:99px;padding:4px 9px;font-size:9.5px;font-weight:700;white-space:nowrap}
-.save-rows{display:flex;flex-direction:column;gap:6px;margin-top:9px}
-.save-rows span{display:flex;justify-content:space-between;font-size:9.5px;color:var(--sub)}
-.save-rows strong{color:var(--ink);font-weight:700}
-.save-note{display:block;margin-top:8px;font-size:8px;color:var(--faint)}
-
 /* valor-visual-demo: rotulos demo */
 .demo-tag{display:inline-flex;align-items:center;background:#eceafc;color:#6a61d9;font-size:7.5px;font-weight:800;letter-spacing:.8px;border-radius:4px;padding:2px 5px;margin-right:5px;vertical-align:2px}
 
@@ -106,15 +98,10 @@
 .professional-card.clickable{cursor:pointer;transition:transform .15s,box-shadow .15s}
 .professional-card.clickable:hover{transform:translateY(-2px);box-shadow:0 8px 22px #20243612}
 
-
 .pro-profile{display:flex;align-items:center;gap:11px;padding:2px 0 12px}
 .pro-profile strong{font:800 14px var(--font-head);display:block;letter-spacing:-.3px}
 .pro-profile span{font-size:10px;color:#7d78b7}
 .pro-profile small{display:block;font-size:9px;color:var(--faint);margin-top:2px}
-
-
-
-
 
 
 
